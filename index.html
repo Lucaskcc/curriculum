@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>K & L's curriculum</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-cream: #FCF8ED;
+            --purin-yellow: #FBEA9A;
+            --purin-border: #F6D365;
+            --purin-text: #6B4423;
+            --pochacco-green: #D1E8D5;
+            --pochacco-border: #A3C9A8;
+            --pochacco-text: #2C4A3B;
+            --btn-purple: #D1C4E9;
+            --btn-yellow: #FFF59D;
+            --btn-blue: #BBDEFB;
+            --text: #5A5A5A;
+            --white: #ffffff;
+        }
+
+        body {
+            background-color: var(--bg-cream);
+            background-image: 
+                radial-gradient(#eedfcc 1px, transparent 1px);
+            background-size: 30px 30px;
+            font-family: 'Segoe UI', "Microsoft JhengHei", sans-serif;
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* 標題與裝飾 */
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .header h1 {
+            font-family: 'ZCOOL KuaiLe', cursive;
+            font-size: 2.5rem;
+            color: #4A4A4A;
+            margin: 10px 0;
+            text-shadow: 2px 2px var(--purin-yellow);
+        }
+
+        .pochacco-img {
+            width: 120px;
+            height: auto;
+            border-radius: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            margin-bottom: 10px;
+        }
+
+        /* 控制按鈕 */
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 4px 0px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:active { transform: translateY(2px); box-shadow: none; }
+
+        .btn-my { background-color: var(--btn-yellow); color: var(--purin-text); }
+        .btn-bao { background-color: var(--pochacco-green); color: var(--pochacco-text); }
+        .btn-dual { background-color: var(--btn-blue); color: #1E3A8A; }
+        .btn.active { outline: 3px solid #fff; box-shadow: 0 0 15px rgba(0,0,0,0.1); transform: scale(1.05); }
+
+        /* 課表容器佈局 */
+        .main-wrapper {
+            width: 100%;
+            max-width: 1300px;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        /* 雙人模式時的排版 */
+        .main-wrapper.dual-view {
+            flex-direction: row;
+            align-items: flex-start;
+        }
+
+        .schedule-container {
+            flex: 1;
+            background: var(--white);
+            border-radius: 30px;
+            padding: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            overflow-x: auto;
+            display: none; /* 預設切換用 */
+            position: relative;
+        }
+
+        #container-my {
+            border: 6px solid var(--purin-border);
+            background-color: #FFFCF5;
+        }
+
+        #container-bao {
+            border: 6px solid var(--pochacco-border);
+            background-color: #F4FBF5;
+        }
+
+        .schedule-container.show { display: block; }
+
+        /* 表格樣式 */
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 5px;
+            min-width: 600px;
+            table-layout: fixed; /* 固定表格佈局，強制欄位等寬 */
+        }
+
+        .person-label {
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            color: #555;
+        }
+
+        /* 大頭貼樣式 */
+        .profile-pic {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--white);
+            box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+        }
+
+        #container-my th {
+            background-color: var(--purin-yellow);
+            color: var(--purin-text);
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+        }
+
+        #container-bao th {
+            background-color: var(--pochacco-green);
+            color: var(--pochacco-text);
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+        }
+
+        th:first-child {
+            width: 80px; /* 強制時間欄位的寬度，剩餘空間均分給一到五 */
+        }
+
+        .time-cell {
+            background-color: #f5f5f5;
+            width: 80px;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #888;
+            border-radius: 12px;
+            font-weight: bold;
+        }
+
+        td {
+            padding: 10px;
+            height: 70px;
+            border-radius: 15px;
+            vertical-align: middle;
+            position: relative;
+            background-color: #ffffff; 
+            border: 1px solid #f1f1f1;
+            transition: transform 0.2s;
+            word-wrap: break-word; /* 避免文字超出格子 */
+            overflow-wrap: break-word;
+        }
+
+        td:hover { transform: scale(1.02); z-index: 2; border-color: #ccc; }
+
+        /* 課程文字 */
+        .course-name {
+            display: block;
+            font-weight: 900;
+            font-size: 0.95rem;
+            margin-bottom: 4px;
+            line-height: 1.2;
+        }
+        .instructor { display: block; font-size: 0.8rem; color: #777; }
+        .location { display: block; font-size: 0.75rem; color: #999; margin-top: 2px; }
+
+        /* 空堂裝飾 */
+        td:empty::after {
+            content: "🐾";
+            opacity: 0.05;
+            font-size: 1.5rem;
+            display: flex;
+            justify-content: center;
+        }
+
+        /* 不同課表的標記顏色 */
+        .my-item .course-name { color: var(--purin-text); }
+        .bao-item .course-name { color: var(--pochacco-text); }
+
+        /* 手機版適應 */
+        @media (max-width: 900px) {
+            .main-wrapper.dual-view { flex-direction: column; }
+            .schedule-container { width: 100%; box-sizing: border-box; }
+            .header h1 { font-size: 1.8rem; }
+        }
+
+        /* 自定義捲軸 */
+        ::-webkit-scrollbar { height: 8px; }
+        ::-webkit-scrollbar-track { background: #f0f0f0; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <img src="image3.png" alt="封面照片" class="pochacco-img" onerror="this.style.display='none'">
+        <h1>K & L</h1>
+        <p style="color:#888; font-size: 0.9rem; font-weight: bold;">我們的專屬雙人課表 🐾</p>
+    </div>
+
+    <div class="controls">
+        <button class="btn btn-my active" onclick="showMode('my')">Kcc</button>
+        <button class="btn btn-bao" onclick="showMode('bao')">Lyz</button>
+        <button class="btn btn-dual" onclick="showMode('dual')">Our</button>
+    </div>
+
+    <div class="main-wrapper" id="mainWrapper">
+        
+        <div id="container-my" class="schedule-container show">
+            <div class="person-label">
+                <img src="image2.png" alt="我" class="profile-pic" onerror="this.src='https://api.iconify.design/noto:pudding.svg'"> 
+                Kcc
+            </div>
+            <table>
+                <thead>
+                    <tr><th>-</th><th>一</th><th>二</th><th>三</th><th>四</th><th>五</th></tr>
+                </thead>
+                <tbody id="myTableBody">
+                    <!-- Javascript 會在這裡產生表格 -->
+                </tbody>
+            </table>
+        </div>
+
+        <div id="container-bao" class="schedule-container">
+            <div class="person-label">
+                <img src="image1.png" alt="寶" class="profile-pic" onerror="this.src='https://api.iconify.design/noto:dog-face.svg'"> 
+                Lyz
+            </div>
+            <table>
+                <thead>
+                    <tr><th>-</th><th>一</th><th>二</th><th>三</th><th>四</th><th>五</th></tr>
+                </thead>
+                <tbody id="baoTableBody">
+                    <!-- Javascript 會在這裡產生表格 -->
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <script>
+        // 課表資料定義
+        const myData = [
+            { period: "1", time: "08:10", mon: "", tue: "", wed: "", thu: "", fri: "" },
+            { period: "2", time: "09:10", mon: "管理數學|吳蘭珍|藝408", tue: "物件導向系統分析與設計|徐國鈞|電703", wed: "資料庫管理系統實作|謝文欽|資402", thu: "", fri: "程式設計(二)|林俊杰|資401" },
+            { period: "3", time: "10:10", mon: "管理數學|吳蘭珍|藝408", tue: "物件導向系統分析與設計|徐國鈞|電703", wed: "資料庫管理系統實作|謝文欽|資402", thu: "生命教育|高君和|藝410", fri: "程式設計(二)|林俊杰|資401" },
+            { period: "4", time: "11:10", mon: "管理數學|吳蘭珍|藝408", tue: "物件導向系統分析與設計|徐國鈞|電703", wed: "資料庫管理系統實作|謝文欽|資402", thu: "生命教育|高君和|藝410", fri: "程式設計(二)|林俊杰|資401" },
+            { period: "5", time: "13:30", mon: "管理資訊系統|陳信宏|資402", tue: "體育二(下)|姜凱心|待排", wed: "電子商務與網路行銷|唐日新|電708", thu: "統計學(一)|賴蓉禾|藝410", fri: "" },
+            { period: "6", time: "14:25", mon: "管理資訊系統|陳信宏|資402", tue: "體育二(下)|姜凱心|待排", wed: "電子商務與網路行銷|唐日新|電708", thu: "統計學(一)|賴蓉禾|藝410", fri: "" },
+            { period: "7", time: "15:25", mon: "管理資訊系統|陳信宏|資402", tue: "希臘羅馬神話|簡士捷|藝410", wed: "電子商務與網路行銷|唐日新|電708", thu: "統計學(一)|賴蓉禾|藝410", fri: "" },
+            { period: "8", time: "16:20", mon: "", tue: "希臘羅馬神話|簡士捷|藝410", wed: "", thu: "", fri: "" }
+        ];
+
+        const baoData = [
+            { period: "1", time: "08:10", mon: "", tue: "", wed: "", thu: "", fri: "" },
+            { period: "2", time: "09:10", mon: "經濟學|王慶熙|藝409", tue: "", wed: "", thu: "Python程式設計|林宏仁|電707", fri: "" },
+            { period: "3", time: "10:10", mon: "經濟學|王慶熙|藝409", tue: "現代商業導論|蔡文隆|藝410", wed: "體育一(下)|李昭慶|待排", thu: "Python程式設計|林宏仁|電707", fri: "" },
+            { period: "4", time: "11:10", mon: "經濟學|王慶熙|藝409", tue: "現代商業導論|蔡文隆|藝410", wed: "體育一(下)|李昭慶|待排", thu: "Python程式設計|林宏仁|電707", fri: "" },
+            { period: "5", time: "13:30", mon: "微積分(二)|陳杏棻|藝409", tue: "英文(二)|簡士捷|藝410", wed: "大學國文選|翁燕玲|藝410", thu: "財務管理(一)|許慶文|藝403", fri: "" },
+            { period: "6", time: "14:25", mon: "微積分(二)|陳杏棻|藝409", tue: "英文(二)|簡士捷|藝410", wed: "大學國文選|翁燕玲|藝410", thu: "財務管理(一)|許慶文|藝403", fri: "" },
+            { period: "7", time: "15:25", mon: "微積分(二)|陳杏棻|藝409", tue: "資訊倫理與法律|林熙中|電606", wed: "", thu: "財務管理(一)|許慶文|藝403", fri: "服務學習|陳杏棻|藝410" },
+            { period: "8", time: "16:20", mon: "", tue: "資訊倫理與法律|林熙中|電606", wed: "", thu: "", fri: "服務學習|陳杏棻|藝410" }
+        ];
+
+        // 渲染表格
+        function renderTable(containerId, data, itemClass) {
+            const tbody = document.getElementById(containerId);
+            tbody.innerHTML = "";
+            data.forEach(row => {
+                let html = `<tr><td class="time-cell">${row.period}<br>${row.time}</td>`;
+                ["mon", "tue", "wed", "thu", "fri"].forEach(day => {
+                    const info = row[day].split("|");
+                    if (info.length > 1) {
+                        html += `<td class="${itemClass}">
+                                    <span class="course-name">${info[0]}</span>
+                                    <span class="instructor">${info[1]}</span>
+                                    <span class="location">${info[2]}</span>
+                                 </td>`;
+                    } else {
+                        html += `<td></td>`;
+                    }
+                });
+                html += `</tr>`;
+                tbody.innerHTML += html;
+            });
+        }
+
+        function showMode(mode) {
+            const wrapper = document.getElementById('mainWrapper');
+            const cMy = document.getElementById('container-my');
+            const cBao = document.getElementById('container-bao');
+            const btns = document.querySelectorAll('.btn');
+
+            btns.forEach(b => b.classList.remove('active'));
+
+            if (mode === 'my') {
+                wrapper.classList.remove('dual-view');
+                cMy.classList.add('show');
+                cBao.classList.remove('show');
+                document.querySelector('.btn-my').classList.add('active');
+            } else if (mode === 'bao') {
+                wrapper.classList.remove('dual-view');
+                cMy.classList.remove('show');
+                cBao.classList.add('show');
+                document.querySelector('.btn-bao').classList.add('active');
+            } else {
+                wrapper.classList.add('dual-view');
+                cMy.classList.add('show');
+                cBao.classList.add('show');
+                document.querySelector('.btn-dual').classList.add('active');
+            }
+        }
+
+        // 初始化
+        renderTable("myTableBody", myData, "my-item");
+        renderTable("baoTableBody", baoData, "bao-item");
+    </script>
+</body>
+</html>
