@@ -176,17 +176,31 @@
         }
 
         th:first-child {
-            width: 80px; /* 強制時間欄位的寬度，剩餘空間均分給一到五 */
+            width: 90px; /* 稍微加寬給下課時間一點空間 */
         }
 
         .time-cell {
             background-color: #f5f5f5;
-            width: 80px;
+            width: 90px;
             text-align: center;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             color: #888;
             border-radius: 12px;
             font-weight: bold;
+            line-height: 1.4;
+        }
+
+        /* 讓節次數字大一點，時間字體小一點 */
+        .time-cell .period-num {
+            font-size: 1.1rem;
+            color: #555;
+            display: block;
+            margin-bottom: 4px;
+        }
+        .time-cell .time-range {
+            font-size: 0.75rem;
+            font-weight: normal;
+            color: #777;
         }
 
         td {
@@ -290,27 +304,27 @@
     </div>
 
     <script>
-        // 課表資料定義
+        // 課表資料定義 (加入了 endTime 下課時間)
         const myData = [
-            { period: "1", time: "08:10", mon: "", tue: "", wed: "", thu: "", fri: "" },
-            { period: "2", time: "09:10", mon: "管理數學|吳蘭珍|藝408", tue: "物件導向系統分析與設計|徐國鈞|電703", wed: "資料庫管理系統實作|謝文欽|資402", thu: "", fri: "程式設計(二)|林俊杰|資401" },
-            { period: "3", time: "10:10", mon: "管理數學|吳蘭珍|藝408", tue: "物件導向系統分析與設計|徐國鈞|電703", wed: "資料庫管理系統實作|謝文欽|資402", thu: "生命教育|高君和|藝410", fri: "程式設計(二)|林俊杰|資401" },
-            { period: "4", time: "11:10", mon: "管理數學|吳蘭珍|藝408", tue: "物件導向系統分析與設計|徐國鈞|電703", wed: "資料庫管理系統實作|謝文欽|資402", thu: "生命教育|高君和|藝410", fri: "程式設計(二)|林俊杰|資401" },
-            { period: "5", time: "13:30", mon: "管理資訊系統|陳信宏|資402", tue: "體育二(下)|姜凱心|待排", wed: "電子商務與網路行銷|唐日新|電708", thu: "統計學(一)|賴蓉禾|藝410", fri: "" },
-            { period: "6", time: "14:25", mon: "管理資訊系統|陳信宏|資402", tue: "體育二(下)|姜凱心|待排", wed: "電子商務與網路行銷|唐日新|電708", thu: "統計學(一)|賴蓉禾|藝410", fri: "" },
-            { period: "7", time: "15:25", mon: "管理資訊系統|陳信宏|資402", tue: "希臘羅馬神話|簡士捷|藝410", wed: "電子商務與網路行銷|唐日新|電708", thu: "統計學(一)|賴蓉禾|藝410", fri: "" },
-            { period: "8", time: "16:20", mon: "", tue: "希臘羅馬神話|簡士捷|藝410", wed: "", thu: "", fri: "" }
+            { period: "1", time: "08:10", endTime: "09:00", mon: "", tue: "", wed: "", thu: "", fri: "" },
+            { period: "2", time: "09:10", endTime: "10:00", mon: "管理數學|吳蘭珍|藝408", tue: "物件導向系統分析與設計|徐國鈞|電703", wed: "資料庫管理系統實作|謝文欽|資402", thu: "", fri: "程式設計(二)|林俊杰|資401" },
+            { period: "3", time: "10:10", endTime: "11:00", mon: "管理數學|吳蘭珍|藝408", tue: "物件導向系統分析與設計|徐國鈞|電703", wed: "資料庫管理系統實作|謝文欽|資402", thu: "生命教育|高君和|藝410", fri: "程式設計(二)|林俊杰|資401" },
+            { period: "4", time: "11:10", endTime: "12:00", mon: "管理數學|吳蘭珍|藝408", tue: "物件導向系統分析與設計|徐國鈞|電703", wed: "資料庫管理系統實作|謝文欽|資402", thu: "生命教育|高君和|藝410", fri: "程式設計(二)|林俊杰|資401" },
+            { period: "5", time: "13:30", endTime: "14:20", mon: "管理資訊系統|陳信宏|資402", tue: "體育二(下)|姜凱心|待排", wed: "電子商務與網路行銷|唐日新|電708", thu: "統計學(一)|賴蓉禾|藝410", fri: "" },
+            { period: "6", time: "14:25", endTime: "15:15", mon: "管理資訊系統|陳信宏|資402", tue: "體育二(下)|姜凱心|待排", wed: "電子商務與網路行銷|唐日新|電708", thu: "統計學(一)|賴蓉禾|藝410", fri: "" },
+            { period: "7", time: "15:25", endTime: "16:15", mon: "管理資訊系統|陳信宏|資402", tue: "希臘羅馬神話|簡士捷|藝410", wed: "電子商務與網路行銷|唐日新|電708", thu: "統計學(一)|賴蓉禾|藝410", fri: "" },
+            { period: "8", time: "16:20", endTime: "17:10", mon: "", tue: "希臘羅馬神話|簡士捷|藝410", wed: "", thu: "", fri: "" }
         ];
 
         const baoData = [
-            { period: "1", time: "08:10", mon: "", tue: "", wed: "", thu: "", fri: "" },
-            { period: "2", time: "09:10", mon: "經濟學|王慶熙|藝409", tue: "", wed: "", thu: "Python程式設計|林宏仁|電707", fri: "" },
-            { period: "3", time: "10:10", mon: "經濟學|王慶熙|藝409", tue: "現代商業導論|蔡文隆|藝410", wed: "體育一(下)|李昭慶|待排", thu: "Python程式設計|林宏仁|電707", fri: "" },
-            { period: "4", time: "11:10", mon: "經濟學|王慶熙|藝409", tue: "現代商業導論|蔡文隆|藝410", wed: "體育一(下)|李昭慶|待排", thu: "Python程式設計|林宏仁|電707", fri: "" },
-            { period: "5", time: "13:30", mon: "微積分(二)|陳杏棻|藝409", tue: "英文(二)|簡士捷|藝410", wed: "大學國文選|翁燕玲|藝410", thu: "財務管理(一)|許慶文|藝403", fri: "" },
-            { period: "6", time: "14:25", mon: "微積分(二)|陳杏棻|藝409", tue: "英文(二)|簡士捷|藝410", wed: "大學國文選|翁燕玲|藝410", thu: "財務管理(一)|許慶文|藝403", fri: "" },
-            { period: "7", time: "15:25", mon: "微積分(二)|陳杏棻|藝409", tue: "資訊倫理與法律|林熙中|電606", wed: "", thu: "財務管理(一)|許慶文|藝403", fri: "服務學習|陳杏棻|藝410" },
-            { period: "8", time: "16:20", mon: "", tue: "資訊倫理與法律|林熙中|電606", wed: "", thu: "", fri: "服務學習|陳杏棻|藝410" }
+            { period: "1", time: "08:10", endTime: "09:00", mon: "", tue: "", wed: "", thu: "", fri: "" },
+            { period: "2", time: "09:10", endTime: "10:00", mon: "經濟學|王慶熙|藝409", tue: "", wed: "", thu: "Python程式設計|林宏仁|電707", fri: "" },
+            { period: "3", time: "10:10", endTime: "11:00", mon: "經濟學|王慶熙|藝409", tue: "現代商業導論|蔡文隆|藝410", wed: "體育一(下)|李昭慶|待排", thu: "Python程式設計|林宏仁|電707", fri: "" },
+            { period: "4", time: "11:10", endTime: "12:00", mon: "經濟學|王慶熙|藝409", tue: "現代商業導論|蔡文隆|藝410", wed: "體育一(下)|李昭慶|待排", thu: "Python程式設計|林宏仁|電707", fri: "" },
+            { period: "5", time: "13:30", endTime: "14:20", mon: "微積分(二)|陳杏棻|藝409", tue: "英文(二)|簡士捷|藝410", wed: "大學國文選|翁燕玲|藝410", thu: "財務管理(一)|許慶文|藝403", fri: "" },
+            { period: "6", time: "14:25", endTime: "15:15", mon: "微積分(二)|陳杏棻|藝409", tue: "英文(二)|簡士捷|藝410", wed: "大學國文選|翁燕玲|藝410", thu: "財務管理(一)|許慶文|藝403", fri: "" },
+            { period: "7", time: "15:25", endTime: "16:15", mon: "微積分(二)|陳杏棻|藝409", tue: "資訊倫理與法律|林熙中|電606", wed: "", thu: "財務管理(一)|許慶文|藝403", fri: "服務學習|陳杏棻|藝410" },
+            { period: "8", time: "16:20", endTime: "17:10", mon: "", tue: "資訊倫理與法律|林熙中|電606", wed: "", thu: "", fri: "服務學習|陳杏棻|藝410" }
         ];
 
         // 渲染表格
@@ -318,7 +332,13 @@
             const tbody = document.getElementById(containerId);
             tbody.innerHTML = "";
             data.forEach(row => {
-                let html = `<tr><td class="time-cell">${row.period}<br>${row.time}</td>`;
+                // 將時間欄位加上下課時間的排版
+                let html = `<tr>
+                    <td class="time-cell">
+                        <span class="period-num">${row.period}</span>
+                        <span class="time-range">${row.time}<br>|<br>${row.endTime}</span>
+                    </td>`;
+                
                 ["mon", "tue", "wed", "thu", "fri"].forEach(day => {
                     const info = row[day].split("|");
                     if (info.length > 1) {
