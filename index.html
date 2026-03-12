@@ -7,304 +7,373 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
+    <script>
+        // 將 imgFallback 移至 head，確保圖片載入失敗時函式已存在
+        function imgFallback(img) {
+            img.onerror = null;
+            img.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23ccc"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>';
+        }
+    </script>
     <style>
         :root {
-            --bg-cream: #FCF8ED;
-            --purin-yellow: #FBEA9A;
-            --purin-border: #F6D365;
-            --purin-text: #6B4423;
-            --pochacco-green: #D1E8D5;
-            --pochacco-border: #A3C9A8;
-            --pochacco-text: #2C4A3B;
-            --btn-purple: #D1C4E9;
-            --btn-yellow: #FFF59D;
-            --btn-blue: #BBDEFB;
-            --text: #5A5A5A;
+            /* 整體背景 */
+            --bg-page: #eef2f5;
+            --app-bg: #ffffff;
+            
+            /* 布丁狗 (Pompompurin) 暖黃色系 */
+            --kcc-light: #FFFBF0;
+            --kcc-main: #FDE073;
+            --kcc-border: #F5C518;
+            --kcc-text: #5C4000;
+            
+            /* 帕恰狗 (Pochacco) 薄荷綠色系 */
+            --lyz-light: #F0FAF4;
+            --lyz-main: #A7E4C0;
+            --lyz-border: #6BCB97;
+            --lyz-text: #0E4729;
+
+            /* Our 按鈕與通用色 */
+            --btn-dual: #F0F2F5;
+            --btn-dual-text: #4A4A4A;
+            --text-main: #333333;
+            --text-muted: #777777;
+            --active-green: #10B981;
             --white: #ffffff;
         }
 
         body {
-            background-color: var(--bg-cream);
-            background-image: 
-                radial-gradient(#eedfcc 1px, transparent 1px);
-            background-size: 30px 30px;
+            background-color: var(--bg-page);
             font-family: 'Segoe UI', "Microsoft JhengHei", sans-serif;
-            color: var(--text);
+            color: var(--text-main);
             margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
             padding: 20px;
+            box-sizing: border-box;
+        }
+
+        /* 整個 APP 的主視窗 */
+        #app-container {
+            width: 100%;
+            max-width: 1300px;
+            background-color: var(--app-bg);
+            border-radius: 20px;
+            padding: 25px 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.06);
+            transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+            min-height: 90vh;
             display: flex;
             flex-direction: column;
             align-items: center;
+            position: relative;
+            overflow: hidden;
         }
+
+        /* 背景小裝飾 */
+        #app-container::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 120px;
+            background: linear-gradient(135deg, var(--kcc-main) 0%, var(--lyz-main) 100%);
+            z-index: 0;
+            border-radius: 20px 20px 0 0;
+            opacity: 0.6;
+        }
+
+        /* ================= 模式 1：手機外框模式 ================= */
+        #app-container.mobile-frame {
+            max-width: 414px; /* iPhone 寬度 */
+            height: 850px;
+            min-height: 850px;
+            border: 14px solid #1a1a1a;
+            border-radius: 45px;
+            padding: 15px 10px;
+            overflow-y: auto;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.2), inset 0 0 10px rgba(0,0,0,0.05);
+        }
+        #app-container.mobile-frame::-webkit-scrollbar { width: 0px; }
+        #app-container.mobile-frame::before { border-radius: 30px 30px 0 0; }
 
         /* 標題與裝飾 */
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-            position: relative;
-        }
-
+        .header { text-align: center; margin-bottom: 25px; position: relative; z-index: 1; }
         .header h1 {
             font-family: 'ZCOOL KuaiLe', cursive;
             font-size: 2.5rem;
-            color: #4A4A4A;
-            margin: 10px 0;
-            text-shadow: 2px 2px var(--purin-yellow);
+            color: #333;
+            margin: 5px 0;
+            letter-spacing: 2px;
         }
 
-        .pochacco-img {
-            width: 120px;
-            height: auto;
-            border-radius: 20px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            margin-bottom: 10px;
-        }
-
-        /* 控制按鈕 */
-        .controls {
+        /* ================= 頁籤切換 ================= */
+        .tab-switcher {
             display: flex;
-            gap: 15px;
+            background: #F0F2F5;
+            border-radius: 14px;
+            padding: 5px;
             margin-bottom: 25px;
-            flex-wrap: wrap;
-            justify-content: center;
+            width: 320px;
+            max-width: 100%;
+            position: relative;
+            z-index: 1;
         }
-
-        .btn {
-            padding: 12px 25px;
-            border: none;
-            border-radius: 50px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 4px 0px rgba(0,0,0,0.05);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .btn:active { transform: translateY(2px); box-shadow: none; }
-
-        .btn-my { background-color: var(--btn-yellow); color: var(--purin-text); }
-        .btn-bao { background-color: var(--pochacco-green); color: var(--pochacco-text); }
-        .btn-dual { background-color: var(--btn-blue); color: #1E3A8A; }
-        .btn.active { outline: 3px solid #fff; box-shadow: 0 0 15px rgba(0,0,0,0.1); transform: scale(1.05); }
-
-        /* 課表容器佈局 */
-        .main-wrapper {
-            width: 100%;
-            max-width: 1300px;
-            display: flex;
-            flex-direction: column;
-            gap: 30px;
-        }
-
-        /* 雙人模式時的排版 */
-        .main-wrapper.dual-view {
-            flex-direction: row;
-            align-items: flex-start;
-        }
-
-        .schedule-container {
+        .tab-btn {
             flex: 1;
-            background: var(--white);
-            border-radius: 30px;
-            padding: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-            overflow-x: auto;
-            display: none; /* 預設切換用 */
-            position: relative;
-        }
-
-        #container-my {
-            border: 6px solid var(--purin-border);
-            background-color: #FFFCF5;
-        }
-
-        #container-bao {
-            border: 6px solid var(--pochacco-border);
-            background-color: #F4FBF5;
-        }
-
-        .schedule-container.show { display: block; }
-
-        /* 表格樣式 */
-        table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 5px;
-            min-width: 600px;
-            table-layout: fixed; /* 固定表格佈局，強制欄位等寬 */
-        }
-
-        .person-label {
-            text-align: center;
-            font-size: 1.5rem;
+            padding: 12px;
+            border: none;
+            background: transparent;
+            border-radius: 10px;
             font-weight: bold;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            color: #555;
-        }
-
-        /* 大頭貼樣式 */
-        .profile-pic {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid var(--white);
-            box-shadow: 0 3px 8px rgba(0,0,0,0.15);
-        }
-
-        #container-my th {
-            background-color: var(--purin-yellow);
-            color: var(--purin-text);
-            padding: 12px;
-            border-radius: 12px;
-            font-size: 1.1rem;
-        }
-
-        #container-bao th {
-            background-color: var(--pochacco-green);
-            color: var(--pochacco-text);
-            padding: 12px;
-            border-radius: 12px;
-            font-size: 1.1rem;
-        }
-
-        th:first-child {
-            width: 90px; /* 稍微加寬給下課時間一點空間 */
-        }
-
-        .time-cell {
-            background-color: #f5f5f5;
-            width: 90px;
-            text-align: center;
-            font-size: 0.85rem;
             color: #888;
-            border-radius: 12px;
-            font-weight: bold;
-            line-height: 1.4;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1rem;
+        }
+        .tab-btn.active { background: var(--white); color: #222; box-shadow: 0 4px 10px rgba(0,0,0,0.06); }
+
+        /* ================= 控制按鈕 ================= */
+        .controls {
+            display: flex; gap: 15px; margin-bottom: 25px; flex-wrap: wrap;
+            justify-content: center; position: relative; z-index: 1;
+        }
+        .btn {
+            padding: 8px 20px 8px 10px; border: 2px solid transparent; border-radius: 50px;
+            font-size: 1rem; font-weight: bold; cursor: pointer; transition: all 0.3s;
+            display: flex; align-items: center; gap: 10px; background-color: var(--white);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .btn img {
+            width: 32px; height: 32px; border-radius: 50%; object-fit: cover;
+            background: #eee; border: 2px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .btn:active { transform: translateY(2px); }
+        .btn-my { color: var(--text-main); }
+        .btn-my.active { background-color: var(--kcc-main); border-color: var(--kcc-border); color: var(--kcc-text); transform: scale(1.05); box-shadow: 0 5px 15px rgba(253, 224, 115, 0.6);}
+        .btn-bao { color: var(--text-main); }
+        .btn-bao.active { background-color: var(--lyz-main); border-color: var(--lyz-border); color: var(--lyz-text); transform: scale(1.05); box-shadow: 0 5px 15px rgba(167, 228, 192, 0.6);}
+        .btn-dual { padding: 10px 25px; color: var(--text-main); }
+        .btn-dual.active { background-color: var(--text-main); color: var(--white); transform: scale(1.05); box-shadow: 0 5px 15px rgba(0,0,0,0.15);}
+
+        /* 視圖容器 */
+        .view-section { display: none; width: 100%; flex-direction: column; align-items: center; position: relative; z-index: 1;}
+        .view-section.active { display: flex; }
+
+        /* ================= 視圖 A: 傳統網格週課表 ================= */
+        .main-wrapper { width: 100%; display: flex; flex-direction: column; gap: 25px; }
+        .main-wrapper.dual-view { flex-direction: row; align-items: flex-start; }
+        .schedule-container {
+            flex: 1; background: var(--white); border-radius: 20px; padding: 20px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.04); overflow-x: auto; display: none;
+        }
+        #container-my { border-top: 6px solid var(--kcc-border); background-color: var(--kcc-light); }
+        #container-bao { border-top: 6px solid var(--lyz-border); background-color: var(--lyz-light); }
+        .schedule-container.show { display: block; }
+        
+        table { width: 100%; border-collapse: separate; border-spacing: 5px; min-width: 500px; table-layout: fixed; }
+        .person-label { 
+            text-align: center; font-size: 1.3rem; font-weight: 900; margin-bottom: 15px; 
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+        }
+        #container-my .person-label { color: var(--kcc-text); }
+        #container-bao .person-label { color: var(--lyz-text); }
+        .person-label img { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        
+        #container-my th { background-color: var(--kcc-main); color: var(--kcc-text); padding: 12px; border-radius: 10px; }
+        #container-bao th { background-color: var(--lyz-main); color: var(--lyz-text); padding: 12px; border-radius: 10px; }
+        th:first-child { width: 75px; }
+        
+        .time-cell-grid { background-color: rgba(255,255,255,0.6); text-align: center; border-radius: 10px; line-height: 1.4; padding: 8px;}
+        .time-cell-grid .p-num { font-size: 1.1rem; font-weight: bold; color: var(--text-main);}
+        .time-cell-grid .t-range { font-size: 0.75rem; color: var(--text-muted); }
+        
+        td.course-cell {
+            padding: 10px 8px; height: 65px; border-radius: 10px; vertical-align: middle;
+            background-color: var(--white); box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+            word-wrap: break-word; overflow-wrap: break-word; text-align: center; transition: transform 0.2s;
+        }
+        td.course-cell:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .course-name { display: block; font-weight: 900; font-size: 0.9rem; margin-bottom: 4px; line-height: 1.2;}
+        .instructor, .location { display: block; font-size: 0.75rem; color: var(--text-muted); }
+        td.course-cell:empty::after { content: "🐾"; opacity: 0.1; font-size: 1.2rem; }
+        .my-item .course-name { color: var(--kcc-text); }
+        .bao-item .course-name { color: var(--lyz-text); }
+
+        /* ================= 視圖 B: 今日課程 (支援點擊展開) ================= */
+        .today-wrapper {
+            width: 100%; display: flex; flex-direction: row; justify-content: center;
+            align-items: flex-start; gap: 25px; padding-bottom: 30px;
+        }
+        .today-col { flex: 1; display: none; flex-direction: column; gap: 15px; max-width: 500px; width: 100%; }
+        .today-col.show { display: flex; }
+
+        .today-header-title {
+            font-size: 1.3rem; font-weight: 900; margin: 10px 0 5px 5px;
+            padding-left: 12px; display: flex; align-items: center; gap: 12px;
+        }
+        #today-my-col .today-header-title { color: var(--kcc-text); border-left: 5px solid var(--kcc-border); }
+        #today-bao-col .today-header-title { color: var(--lyz-text); border-left: 5px solid var(--lyz-border); }
+        .today-header-title img { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 2px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+
+        .empty-state {
+            text-align: center; padding: 50px 20px; color: var(--text-muted); background: var(--white);
+            border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.03); font-weight: bold; font-size: 1.1rem;
+            width: 100%; box-sizing: border-box;
         }
 
-        /* 讓節次數字大一點，時間字體小一點 */
-        .time-cell .period-num {
-            font-size: 1.1rem;
-            color: #555;
-            display: block;
-            margin-bottom: 4px;
+        /* 可互動式課程卡片 */
+        .list-card {
+            background: var(--white); border-radius: 18px; display: flex; flex-direction: column;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid transparent;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); cursor: pointer; overflow: hidden;
         }
-        .time-cell .time-range {
-            font-size: 0.75rem;
-            font-weight: normal;
-            color: #777;
-        }
+        .list-card:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,0.08); }
+        #today-my-col .list-card { border-color: rgba(245, 197, 24, 0.4); }
+        #today-bao-col .list-card { border-color: rgba(107, 203, 151, 0.4); }
 
-        td {
-            padding: 10px;
-            height: 70px;
-            border-radius: 15px;
-            vertical-align: middle;
-            position: relative;
-            background-color: #ffffff; 
-            border: 1px solid #f1f1f1;
-            transition: transform 0.2s;
-            word-wrap: break-word; /* 避免文字超出格子 */
-            overflow-wrap: break-word;
+        /* 卡片主體 (上半部) */
+        .list-card-main {
+            display: flex; align-items: center; padding: 16px; position: relative; width: 100%; box-sizing: border-box;
         }
 
-        td:hover { transform: scale(1.02); z-index: 2; border-color: #ccc; }
-
-        /* 課程文字 */
-        .course-name {
-            display: block;
-            font-weight: 900;
-            font-size: 0.95rem;
-            margin-bottom: 4px;
-            line-height: 1.2;
+        /* 左側：節次與時間 */
+        .list-left {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            width: 75px; border-right: 2px dashed #eee; padding-right: 15px; margin-right: 15px;
         }
-        .instructor { display: block; font-size: 0.8rem; color: #777; }
-        .location { display: block; font-size: 0.75rem; color: #999; margin-top: 2px; }
-
-        /* 空堂裝飾 */
-        td:empty::after {
-            content: "🐾";
-            opacity: 0.05;
-            font-size: 1.5rem;
-            display: flex;
-            justify-content: center;
+        .list-period {
+            background: var(--bg-page); color: var(--text-main); font-size: 1.5rem; font-weight: 900;
+            width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;
+            border-radius: 14px; margin-bottom: 6px; transition: all 0.3s;
         }
+        .list-card.ongoing .list-period {
+            background: var(--active-green); color: white; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+        .list-time { font-size: 0.75rem; color: var(--text-muted); text-align: center; line-height: 1.2; white-space: nowrap; }
 
-        /* 不同課表的標記顏色 */
-        .my-item .course-name { color: var(--purin-text); }
-        .bao-item .course-name { color: var(--pochacco-text); }
+        /* 右側：課程資訊 */
+        .list-right {
+            flex: 1; display: flex; flex-direction: column; justify-content: center; padding-right: 60px;
+        }
+        .list-course-title { font-size: 1.15rem; font-weight: 900; color: var(--text-main); margin-bottom: 8px; }
+        .list-details { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; font-size: 0.85rem; color: var(--text-muted); }
+        .detail-item { display: flex; align-items: center; gap: 5px; }
+        .icon { width: 16px; height: 16px; fill: currentColor; opacity: 0.6; }
 
-        /* 手機版適應 */
+        /* 狀態徽章 */
+        .badge-container { position: absolute; right: 16px; top: 22px; }
+        .status-badge {
+            font-size: 0.75rem; padding: 5px 12px; border-radius: 20px; font-weight: bold;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .status-badge.ended { background: var(--bg-page); color: #aaa; }
+        .status-badge.ongoing { background: #E6F8F1; color: var(--active-green); border: 1px solid #B0EACD; }
+        .dot { width: 8px; height: 8px; background: var(--active-green); border-radius: 50%; display: inline-block; animation: blink 1.5s infinite; }
+        @keyframes blink { 0% {opacity:1;} 50% {opacity:0.4;} 100% {opacity:1;} }
+
+        /* 展開圖示 */
+        .expand-icon {
+            position: absolute; right: 16px; bottom: 16px; width: 20px; height: 20px; fill: #ccc;
+            transition: transform 0.3s;
+        }
+        .list-card.expanded .expand-icon { transform: rotate(180deg); }
+
+        /* 卡片額外資訊 (下半部展開區：倒數與進度條) */
+        .list-card-extra {
+            max-height: 0; opacity: 0; overflow: hidden; transition: all 0.3s ease-out;
+            background: #fafafa; padding: 0 16px;
+        }
+        .list-card.expanded .list-card-extra {
+            max-height: 120px; opacity: 1; padding: 16px; border-top: 1px solid #f0f0f0;
+        }
+        .countdown-text { font-size: 0.95rem; font-weight: bold; color: #444; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+        .progress-bar-bg { width: 100%; height: 8px; background: #e5e7eb; border-radius: 10px; overflow: hidden; }
+        .progress-bar-fill { height: 100%; width: 0%; background: var(--active-green); border-radius: 10px; transition: width 1s linear, background-color 0.3s; }
+
+        /* 浮動切換按鈕 */
+        .floating-toggle {
+            position: fixed; bottom: 30px; right: 30px; background: #222; color: white; border: none;
+            padding: 14px 24px; border-radius: 30px; font-size: 1rem; font-weight: bold; cursor: pointer;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 10px; z-index: 1000; transition: all 0.3s;
+        }
+        .floating-toggle:hover { background: #000; transform: scale(1.05); }
+
         @media (max-width: 900px) {
             .main-wrapper.dual-view { flex-direction: column; }
-            .schedule-container { width: 100%; box-sizing: border-box; }
-            .header h1 { font-size: 1.8rem; }
+            .today-wrapper { flex-direction: column; align-items: center; }
+            .floating-toggle { display: none; }
+            #app-container { border-radius: 0; min-height: 100vh; padding: 15px 10px; }
+            body { padding: 0; }
         }
 
-        /* 自定義捲軸 */
-        ::-webkit-scrollbar { height: 8px; }
-        ::-webkit-scrollbar-track { background: #f0f0f0; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
+        #app-container.mobile-frame .today-wrapper { flex-direction: column; align-items: center; }
+        #app-container.mobile-frame .main-wrapper.dual-view { flex-direction: column; }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <img src="image3.png" alt="封面照片" class="pochacco-img" onerror="this.style.display='none'">
-        <h1>K & L</h1>
-        <p style="color:#888; font-size: 0.9rem; font-weight: bold;">我們的專屬雙人課表 🐾</p>
-    </div>
+    <button class="floating-toggle" onclick="toggleMobileFrame()" id="frameToggleBtn">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+        切換手機預覽
+    </button>
 
-    <div class="controls">
-        <button class="btn btn-my active" onclick="showMode('my')">Kcc</button>
-        <button class="btn btn-bao" onclick="showMode('bao')">Lyz</button>
-        <button class="btn btn-dual" onclick="showMode('dual')">Our</button>
-    </div>
-
-    <div class="main-wrapper" id="mainWrapper">
-        
-        <div id="container-my" class="schedule-container show">
-            <div class="person-label">
-                <img src="image2.png" alt="我" class="profile-pic" onerror="this.src='https://api.iconify.design/noto:pudding.svg'"> 
-                Kcc
-            </div>
-            <table>
-                <thead>
-                    <tr><th>-</th><th>一</th><th>二</th><th>三</th><th>四</th><th>五</th></tr>
-                </thead>
-                <tbody id="myTableBody">
-                    <!-- Javascript 會在這裡產生表格 -->
-                </tbody>
-            </table>
+    <div id="app-container">
+        <div class="header">
+            <h1>K & L</h1>
+            <p style="color:#666; font-size: 0.9rem; font-weight: bold; margin:0;">Our Schedule 🐾</p>
         </div>
 
-        <div id="container-bao" class="schedule-container">
-            <div class="person-label">
-                <img src="image1.png" alt="寶" class="profile-pic" onerror="this.src='https://api.iconify.design/noto:dog-face.svg'"> 
-                Lyz
-            </div>
-            <table>
-                <thead>
-                    <tr><th>-</th><th>一</th><th>二</th><th>三</th><th>四</th><th>五</th></tr>
-                </thead>
-                <tbody id="baoTableBody">
-                    <!-- Javascript 會在這裡產生表格 -->
-                </tbody>
-            </table>
+        <div class="tab-switcher">
+            <button class="tab-btn active" onclick="switchMainView('grid')">📅 週課表</button>
+            <button class="tab-btn" onclick="switchMainView('list')">📋 今日課程</button>
         </div>
 
+        <div class="controls">
+            <button class="btn btn-my active" onclick="showPersonMode('my')">
+                <img src="image1.png" alt="Kcc" onerror="imgFallback(this)"> Kcc
+            </button>
+            <button class="btn btn-bao" onclick="showPersonMode('bao')">
+                <img src="image2.png" alt="Lyz" onerror="imgFallback(this)"> Lyz
+            </button>
+            <button class="btn btn-dual" onclick="showPersonMode('dual')">
+                <img src="image3.png" alt="Our" onerror="imgFallback(this)"> Our
+            </button>
+        </div>
+
+        <!-- 視圖 A：週課表 -->
+        <div id="view-grid" class="view-section active">
+            <div class="main-wrapper" id="mainWrapper">
+                <div id="container-my" class="schedule-container show">
+                    <div class="person-label"><img src="image1.png" alt="Kcc" onerror="imgFallback(this)"> Kcc</div>
+                    <table>
+                        <thead><tr><th>-</th><th>一</th><th>二</th><th>三</th><th>四</th><th>五</th></tr></thead>
+                        <tbody id="myTableBody"></tbody>
+                    </table>
+                </div>
+                <div id="container-bao" class="schedule-container">
+                    <div class="person-label"><img src="image2.png" alt="Lyz" onerror="imgFallback(this)"> Lyz</div>
+                    <table>
+                        <thead><tr><th>-</th><th>一</th><th>二</th><th>三</th><th>四</th><th>五</th></tr></thead>
+                        <tbody id="baoTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- 視圖 B：今日課程 -->
+        <div id="view-list" class="view-section">
+            <div class="today-wrapper" id="todayWrapper">
+                <div id="today-my-col" class="today-col"></div>
+                <div id="today-bao-col" class="today-col"></div>
+            </div>
+        </div>
     </div>
 
     <script>
-        // 課表資料定義 (加入了 endTime 下課時間)
+        const locationIcon = `<svg class="icon" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>`;
+        const personIcon = `<svg class="icon" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>`;
+        const arrowDownIcon = `<svg class="expand-icon" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>`;
+
         const myData = [
             { period: "1", time: "08:10", endTime: "09:00", mon: "", tue: "", wed: "", thu: "", fri: "" },
             { period: "2", time: "09:10", endTime: "10:00", mon: "管理數學|吳蘭珍|藝408", tue: "物件導向系統分析與設計|徐國鈞|電703", wed: "資料庫管理系統實作|謝文欽|資402", thu: "", fri: "程式設計(二)|林俊杰|資401" },
@@ -327,28 +396,79 @@
             { period: "8", time: "16:20", endTime: "17:10", mon: "", tue: "資訊倫理與法律|林熙中|電606", wed: "", thu: "", fri: "服務學習|陳杏棻|藝410" }
         ];
 
-        // 渲染表格
-        function renderTable(containerId, data, itemClass) {
+        let currentPersonMode = 'my';
+        let isMobileFrame = false;
+
+        function toggleMobileFrame() {
+            const app = document.getElementById('app-container');
+            const btn = document.getElementById('frameToggleBtn');
+            isMobileFrame = !isMobileFrame;
+            if (isMobileFrame) {
+                app.classList.add('mobile-frame');
+                btn.innerHTML = `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg> 解除手機預覽`;
+            } else {
+                app.classList.remove('mobile-frame');
+                btn.innerHTML = `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg> 切換手機預覽`;
+            }
+        }
+
+        function switchMainView(viewType) {
+            const tabs = document.querySelectorAll('.tab-btn');
+            tabs.forEach(t => t.classList.remove('active'));
+            document.getElementById('view-grid').classList.remove('active');
+            document.getElementById('view-list').classList.remove('active');
+
+            if (viewType === 'grid') {
+                tabs[0].classList.add('active');
+                document.getElementById('view-grid').classList.add('active');
+            } else {
+                tabs[1].classList.add('active');
+                document.getElementById('view-list').classList.add('active');
+                renderTodayView(); 
+            }
+        }
+
+        function showPersonMode(mode) {
+            currentPersonMode = mode;
+            document.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
+            document.querySelector('.btn-' + mode).classList.add('active');
+
+            const wrapper = document.getElementById('mainWrapper');
+            const cMy = document.getElementById('container-my');
+            const cBao = document.getElementById('container-bao');
+
+            if (mode === 'my') {
+                wrapper.classList.remove('dual-view');
+                cMy.classList.add('show'); cBao.classList.remove('show');
+            } else if (mode === 'bao') {
+                wrapper.classList.remove('dual-view');
+                cMy.classList.remove('show'); cBao.classList.add('show');
+            } else {
+                wrapper.classList.add('dual-view');
+                cMy.classList.add('show'); cBao.classList.add('show');
+            }
+            renderTodayView();
+        }
+
+        function renderGridTable(containerId, data, itemClass) {
             const tbody = document.getElementById(containerId);
             tbody.innerHTML = "";
             data.forEach(row => {
-                // 將時間欄位加上下課時間的排版
                 let html = `<tr>
-                    <td class="time-cell">
-                        <span class="period-num">${row.period}</span>
-                        <span class="time-range">${row.time}<br>|<br>${row.endTime}</span>
+                    <td class="time-cell-grid">
+                        <span class="p-num">${row.period}</span><br>
+                        <span class="t-range">${row.time}</span>
                     </td>`;
-                
                 ["mon", "tue", "wed", "thu", "fri"].forEach(day => {
                     const info = row[day].split("|");
                     if (info.length > 1) {
-                        html += `<td class="${itemClass}">
+                        html += `<td class="course-cell ${itemClass}">
                                     <span class="course-name">${info[0]}</span>
                                     <span class="instructor">${info[1]}</span>
                                     <span class="location">${info[2]}</span>
                                  </td>`;
                     } else {
-                        html += `<td></td>`;
+                        html += `<td class="course-cell"></td>`;
                     }
                 });
                 html += `</tr>`;
@@ -356,35 +476,174 @@
             });
         }
 
-        function showMode(mode) {
-            const wrapper = document.getElementById('mainWrapper');
-            const cMy = document.getElementById('container-my');
-            const cBao = document.getElementById('container-bao');
-            const btns = document.querySelectorAll('.btn');
+        /* 點擊展開卡片 */
+        function toggleCard(cardElement) {
+            cardElement.classList.toggle('expanded');
+            updateDynamicCourseData(); // 點擊時立刻更新倒數內容
+        }
 
-            btns.forEach(b => b.classList.remove('active'));
+        /* 產出清單 HTML (加上 data 屬性與隱藏區塊) */
+        function generateListHTML(data, dayKey) {
+            let html = '';
+            let hasClass = false;
 
-            if (mode === 'my') {
-                wrapper.classList.remove('dual-view');
-                cMy.classList.add('show');
-                cBao.classList.remove('show');
-                document.querySelector('.btn-my').classList.add('active');
-            } else if (mode === 'bao') {
-                wrapper.classList.remove('dual-view');
-                cMy.classList.remove('show');
-                cBao.classList.add('show');
-                document.querySelector('.btn-bao').classList.add('active');
-            } else {
-                wrapper.classList.add('dual-view');
-                cMy.classList.add('show');
-                cBao.classList.add('show');
-                document.querySelector('.btn-dual').classList.add('active');
+            data.forEach(row => {
+                if (row[dayKey]) {
+                    hasClass = true;
+                    const info = row[dayKey].split("|");
+                    
+                    html += `
+                        <div class="list-card" data-start="${row.time}" data-end="${row.endTime}" onclick="toggleCard(this)">
+                            <div class="list-card-main">
+                                <div class="list-left">
+                                    <div class="list-period">${row.period}</div>
+                                    <div class="list-time">${row.time} - ${row.endTime}</div>
+                                </div>
+                                <div class="list-right">
+                                    <div class="list-course-title">${info[0]}</div>
+                                    <div class="list-details">
+                                        <div class="detail-item">${locationIcon} ${info[2]}</div>
+                                        <div class="detail-item">${personIcon} ${info[1]}</div>
+                                    </div>
+                                </div>
+                                <div class="badge-container"></div>
+                                ${arrowDownIcon}
+                            </div>
+                            <div class="list-card-extra">
+                                <div class="countdown-text">計算中...</div>
+                                <div class="progress-bar-bg"><div class="progress-bar-fill"></div></div>
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+
+            if (!hasClass) return `<div class="empty-state">今天沒有排課程喔！開心去玩吧 🐾</div>`;
+            return html;
+        }
+
+        /* 渲染今日課表架構 */
+        function renderTodayView() {
+            const myCol = document.getElementById('today-my-col');
+            const baoCol = document.getElementById('today-bao-col');
+            
+            let dayIndex = new Date().getDay(); 
+            const daysMap = {1: 'mon', 2: 'tue', 3: 'wed', 4: 'thu', 5: 'fri'};
+            
+            if(dayIndex === 0 || dayIndex === 6) dayIndex = 1; // 假日測試用，強制禮拜一
+
+            const currentDayKey = daysMap[dayIndex];
+
+            myCol.innerHTML = ''; baoCol.innerHTML = '';
+
+            if (!currentDayKey) {
+                myCol.innerHTML = `<div class="empty-state">🎉 耶！今天是週末，好好休息吧！🐾</div>`;
+                myCol.classList.add('show'); baoCol.classList.remove('show');
+                return;
             }
+
+            let myHtml = `<div class="today-header-title"><img src="image1.png" alt="Kcc" onerror="imgFallback(this)"> Kcc 的課</div>`;
+            myHtml += generateListHTML(myData, currentDayKey);
+            myCol.innerHTML = myHtml;
+
+            let baoHtml = `<div class="today-header-title"><img src="image2.png" alt="Lyz" onerror="imgFallback(this)"> Lyz 的課</div>`;
+            baoHtml += generateListHTML(baoData, currentDayKey);
+            baoCol.innerHTML = baoHtml;
+
+            if (currentPersonMode === 'my') {
+                myCol.classList.add('show'); baoCol.classList.remove('show');
+            } else if (currentPersonMode === 'bao') {
+                myCol.classList.remove('show'); baoCol.classList.add('show');
+            } else {
+                myCol.classList.add('show'); baoCol.classList.add('show');
+            }
+
+            // 渲染完立刻更新一次狀態
+            updateDynamicCourseData();
+        }
+
+        /* 核心動態更新功能：每秒計算並更新狀態與進度條 */
+        function updateDynamicCourseData() {
+            const cards = document.querySelectorAll('.list-card');
+            if(cards.length === 0) return;
+
+            const now = new Date();
+
+            cards.forEach(card => {
+                const startStr = card.getAttribute('data-start');
+                const endStr = card.getAttribute('data-end');
+                if(!startStr || !endStr) return;
+
+                const [sH, sM] = startStr.split(':').map(Number);
+                const [eH, eM] = endStr.split(':').map(Number);
+                
+                let sDate = new Date(); sDate.setHours(sH, sM, 0, 0);
+                let eDate = new Date(); eDate.setHours(eH, eM, 0, 0);
+
+                const badgeContainer = card.querySelector('.badge-container');
+                let status = 'upcoming';
+                
+                if (now > eDate) status = 'ended';
+                else if (now >= sDate && now <= eDate) status = 'ongoing';
+
+                // 更新外觀與 Badge
+                if(status === 'ongoing') {
+                    if(!card.classList.contains('ongoing')) {
+                        card.classList.add('ongoing'); card.classList.remove('ended');
+                        badgeContainer.innerHTML = `<div class="status-badge ongoing"><span class="dot"></span> 上課中</div>`;
+                    }
+                } else if (status === 'ended') {
+                    if(!card.classList.contains('ended')) {
+                        card.classList.add('ended'); card.classList.remove('ongoing');
+                        badgeContainer.innerHTML = `<div class="status-badge ended">已結束</div>`;
+                    }
+                } else {
+                    card.classList.remove('ongoing', 'ended');
+                    badgeContainer.innerHTML = '';
+                }
+
+                // 如果卡片展開了，才更新詳細倒數與進度條文字
+                if (card.classList.contains('expanded')) {
+                    const textEl = card.querySelector('.countdown-text');
+                    const barEl = card.querySelector('.progress-bar-fill');
+
+                    if (status === 'ended') {
+                        textEl.innerText = "🍻 這堂課已經結束囉！";
+                        barEl.style.width = '100%';
+                        barEl.style.backgroundColor = '#ccc';
+                    } else if (status === 'ongoing') {
+                        const diffMs = eDate - now;
+                        const mins = Math.floor(diffMs / 60000);
+                        const secs = Math.floor((diffMs % 60000) / 1000);
+                        textEl.innerText = `⏳ 距離下課還有 ${mins} 分 ${secs} 秒`;
+
+                        const totalMs = eDate - sDate;
+                        const MathElapsed = now - sDate;
+                        const percent = (MathElapsed / totalMs) * 100;
+                        
+                        barEl.style.width = `${percent}%`;
+                        barEl.style.backgroundColor = 'var(--active-green)';
+                    } else { // upcoming
+                        const diffMs = sDate - now;
+                        const hours = Math.floor(diffMs / 3600000);
+                        const mins = Math.floor((diffMs % 3600000) / 60000);
+                        const secs = Math.floor((diffMs % 60000) / 1000);
+                        
+                        let timeStr = hours > 0 ? `${hours} 小時 ${mins} 分` : `${mins} 分 ${secs} 秒`;
+                        textEl.innerText = `🔜 距離上課還有 ${timeStr}`;
+                        barEl.style.width = '0%';
+                    }
+                }
+            });
         }
 
         // 初始化
-        renderTable("myTableBody", myData, "my-item");
-        renderTable("baoTableBody", baoData, "bao-item");
+        renderGridTable("myTableBody", myData, "my-item");
+        renderGridTable("baoTableBody", baoData, "bao-item");
+        
+        // 每 1 秒鐘精準刷新一次倒數計時與卡片狀態
+        setInterval(updateDynamicCourseData, 1000);
+
     </script>
 </body>
 </html>
