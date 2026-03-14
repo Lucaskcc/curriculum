@@ -68,7 +68,7 @@
             flex-direction: column;
             align-items: center;
             position: relative;
-            overflow-x: hidden; /* 防止整個畫面被撐開 */
+            overflow-x: hidden;
         }
 
         /* 背景小裝飾 */
@@ -170,7 +170,6 @@
         }
         .main-wrapper.dual-view { flex-direction: row; align-items: flex-start; }
         
-        /* 修正手機版課表無法滑動的關鍵 CSS */
         .schedule-container {
             flex: 1; 
             background: var(--white); 
@@ -179,10 +178,10 @@
             box-shadow: 0 8px 25px rgba(0,0,0,0.04); 
             display: none;
             width: 100%;
-            max-width: 100%; /* 防止撐破父層 */
-            box-sizing: border-box; /* 確保 padding 算在寬度內 */
-            overflow-x: auto; /* 允許橫向滑動 */
-            -webkit-overflow-scrolling: touch; /* 讓 iOS 滑動更順暢 */
+            max-width: 100%;
+            box-sizing: border-box;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
         }
         #container-my { border-top: 6px solid var(--kcc-border); background-color: var(--kcc-light); }
         #container-bao { border-top: 6px solid var(--lyz-border); background-color: var(--lyz-light); }
@@ -199,7 +198,7 @@
         
         #container-my th { background-color: var(--kcc-main); color: var(--kcc-text); padding: 12px; border-radius: 10px; }
         #container-bao th { background-color: var(--lyz-main); color: var(--lyz-text); padding: 12px; border-radius: 10px; }
-        th:first-child { width: 90px; } /* 稍微加寬以容納下課時間 */
+        th:first-child { width: 90px; }
         
         .time-cell-grid { background-color: rgba(255,255,255,0.6); text-align: center; border-radius: 10px; line-height: 1.4; padding: 8px;}
         .time-cell-grid .p-num { font-size: 1.1rem; font-weight: bold; color: var(--text-main);}
@@ -541,15 +540,24 @@
             let dayIndex = new Date().getDay(); 
             const daysMap = {1: 'mon', 2: 'tue', 3: 'wed', 4: 'thu', 5: 'fri'};
             
-            if(dayIndex === 0 || dayIndex === 6) dayIndex = 1;
-
             const currentDayKey = daysMap[dayIndex];
 
             myCol.innerHTML = ''; baoCol.innerHTML = '';
 
+            // 如果是六、日（假日），直接顯示無課程
             if (!currentDayKey) {
-                myCol.innerHTML = `<div class="empty-state">🎉 耶！今天是週末，好好休息吧！🐾</div>`;
-                myCol.classList.add('show'); baoCol.classList.remove('show');
+                const weekendMsg = `<div class="empty-state">🎉 本日無課程！好好享受假日吧 🐾</div>`;
+                
+                myCol.innerHTML = `<div class="today-header-title"><img src="image1.png" alt="Kcc" onerror="imgFallback(this)"> Kcc 的課</div>` + weekendMsg;
+                baoCol.innerHTML = `<div class="today-header-title"><img src="image2.png" alt="Lyz" onerror="imgFallback(this)"> Lyz 的課</div>` + weekendMsg;
+
+                if (currentPersonMode === 'my') {
+                    myCol.classList.add('show'); baoCol.classList.remove('show');
+                } else if (currentPersonMode === 'bao') {
+                    myCol.classList.remove('show'); baoCol.classList.add('show');
+                } else {
+                    myCol.classList.add('show'); baoCol.classList.add('show');
+                }
                 return;
             }
 
