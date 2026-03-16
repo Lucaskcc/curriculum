@@ -82,6 +82,35 @@
             opacity: 0.6;
         }
 
+        /* ================= 動態時鐘樣式 ================= */
+        .clock-display {
+            position: absolute;
+            top: 25px;
+            right: 25px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 8px 16px;
+            border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            font-weight: bold;
+            font-size: 0.95rem;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 10;
+            border: 2px solid var(--white);
+            backdrop-filter: blur(5px);
+        }
+        .clock-display span.time {
+            color: var(--active-green);
+            font-size: 1.15rem;
+            font-family: 'Courier New', Courier, monospace;
+            letter-spacing: 1px;
+        }
+        .clock-icon {
+            width: 18px; height: 18px; fill: var(--text-muted);
+        }
+
         /* ================= 模式 1：手機外框模式 ================= */
         #app-container.mobile-frame {
             max-width: 414px; /* iPhone 寬度 */
@@ -96,6 +125,25 @@
         }
         #app-container.mobile-frame::-webkit-scrollbar { width: 0px; }
         #app-container.mobile-frame::before { border-radius: 30px 30px 0 0; }
+        
+        /* 手機模式或小螢幕時的時鐘調整 */
+        @media (max-width: 900px) {
+            .clock-display {
+                position: static;
+                margin-bottom: 10px;
+                background: transparent;
+                box-shadow: none;
+                border: none;
+            }
+        }
+        #app-container.mobile-frame .clock-display {
+            position: static;
+            margin-bottom: 5px;
+            background: transparent;
+            box-shadow: none;
+            border: none;
+            justify-content: center;
+        }
 
         /* 標題與裝飾 */
         .header { text-align: center; margin-bottom: 25px; position: relative; z-index: 1; }
@@ -280,6 +328,7 @@
             display: flex; align-items: center; gap: 6px;
         }
         .status-badge.ended { background: var(--bg-page); color: #aaa; }
+        .status-badge.upcoming { background: #f0f8ff; color: #4b9beb; border: 1px solid #cce5ff;}
         .status-badge.ongoing { background: #E6F8F1; color: var(--active-green); border: 1px solid #B0EACD; }
         .dot { width: 8px; height: 8px; background: var(--active-green); border-radius: 50%; display: inline-block; animation: blink 1.5s infinite; }
         @keyframes blink { 0% {opacity:1;} 50% {opacity:0.4;} 100% {opacity:1;} }
@@ -329,6 +378,12 @@
     </button>
 
     <div id="app-container">
+        <!-- 這是新增的右上角動態時鐘 -->
+        <div id="real-time-clock" class="clock-display">
+            <svg class="clock-icon" viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/><path d="M12.5 7H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+            <span id="date-text"></span> <span id="time-text" class="time"></span>
+        </div>
+
         <div class="header">
             <h1>K & L</h1>
             <p style="color:#666; font-size: 0.9rem; font-weight: bold; margin:0;">Our Schedule 🐾</p>
@@ -340,15 +395,15 @@
         </div>
 
         <div class="controls">
-            <!-- 替換為 image1.png, image2.png, image3.png -->
+            <!-- 已替換為您上傳的正確檔名 -->
             <button class="btn btn-my active" onclick="showPersonMode('my')">
-                <img src="image1.png" alt="Kcc" onerror="imgFallback(this)"> Kcc
+                <img src="我.jpg" alt="Kcc" onerror="imgFallback(this)"> Kcc
             </button>
             <button class="btn btn-bao" onclick="showPersonMode('bao')">
-                <img src="image2.png" alt="Lyz" onerror="imgFallback(this)"> Lyz
+                <img src="寶.jpg" alt="Lyz" onerror="imgFallback(this)"> Lyz
             </button>
             <button class="btn btn-dual" onclick="showPersonMode('dual')">
-                <img src="image3.png" alt="Our" onerror="imgFallback(this)"> Our
+                <img src="S__48414784.jpg" alt="Our" onerror="imgFallback(this)"> Our
             </button>
         </div>
 
@@ -356,14 +411,14 @@
         <div id="view-grid" class="view-section active">
             <div class="main-wrapper" id="mainWrapper">
                 <div id="container-my" class="schedule-container show">
-                    <div class="person-label"><img src="image1.png" alt="Kcc" onerror="imgFallback(this)"> Kcc</div>
+                    <div class="person-label"><img src="我.jpg" alt="Kcc" onerror="imgFallback(this)"> Kcc</div>
                     <table>
                         <thead><tr><th>-</th><th>一</th><th>二</th><th>三</th><th>四</th><th>五</th></tr></thead>
                         <tbody id="myTableBody"></tbody>
                     </table>
                 </div>
                 <div id="container-bao" class="schedule-container">
-                    <div class="person-label"><img src="image2.png" alt="Lyz" onerror="imgFallback(this)"> Lyz</div>
+                    <div class="person-label"><img src="寶.jpg" alt="Lyz" onerror="imgFallback(this)"> Lyz</div>
                     <table>
                         <thead><tr><th>-</th><th>一</th><th>二</th><th>三</th><th>四</th><th>五</th></tr></thead>
                         <tbody id="baoTableBody"></tbody>
@@ -410,6 +465,47 @@
 
         let currentPersonMode = 'my';
         let isMobileFrame = false;
+        
+        // 紀錄當前渲染的日期 (用來判斷是否過午夜換日)
+        let lastRenderedDay = new Date().getDay();
+
+        // 頁面載入時初始化
+        window.onload = () => {
+            renderGridTable('myTableBody', myData, 'my-item');
+            renderGridTable('baoTableBody', baoData, 'bao-item');
+            renderTodayView();
+            
+            // 啟動時鐘與自動更新機制
+            tickTime();
+            setInterval(tickTime, 1000);
+        };
+
+        // 每秒執行的心跳包：更新時鐘、跨日檢測、更新課程進度
+        function tickTime() {
+            const now = new Date();
+            
+            // 1. 更新右上角時鐘
+            const daysArr = ['日', '一', '二', '三', '四', '五', '六'];
+            const mm = String(now.getMonth() + 1).padStart(2, '0');
+            const dd = String(now.getDate()).padStart(2, '0');
+            const dayStr = daysArr[now.getDay()];
+            
+            const hh = String(now.getHours()).padStart(2, '0');
+            const min = String(now.getMinutes()).padStart(2, '0');
+            const ss = String(now.getSeconds()).padStart(2, '0');
+
+            document.getElementById('date-text').innerText = `${mm}/${dd} (週${dayStr})`;
+            document.getElementById('time-text').innerText = `${hh}:${min}:${ss}`;
+
+            // 2. 跨夜自動更新 (如果目前的星期跟上次渲染的星期不同，代表換日了)
+            if (now.getDay() !== lastRenderedDay) {
+                lastRenderedDay = now.getDay();
+                renderTodayView(); // 重新繪製今日課程
+            }
+
+            // 3. 更新動態課程資料 (倒數計時與進度條)
+            updateDynamicCourseData(now);
+        }
 
         function toggleMobileFrame() {
             const app = document.getElementById('app-container');
@@ -462,7 +558,7 @@
             renderTodayView();
         }
 
-        /* 渲染網格課表：加入下課時間顯示 */
+        /* 渲染網格課表 */
         function renderGridTable(containerId, data, itemClass) {
             const tbody = document.getElementById(containerId);
             tbody.innerHTML = "";
@@ -491,7 +587,7 @@
 
         function toggleCard(cardElement) {
             cardElement.classList.toggle('expanded');
-            updateDynamicCourseData(); 
+            updateDynamicCourseData(new Date()); 
         }
 
         function generateListHTML(data, dayKey) {
@@ -539,7 +635,6 @@
             
             let dayIndex = new Date().getDay(); 
             const daysMap = {1: 'mon', 2: 'tue', 3: 'wed', 4: 'thu', 5: 'fri'};
-            
             const currentDayKey = daysMap[dayIndex];
 
             myCol.innerHTML = ''; baoCol.innerHTML = '';
@@ -548,8 +643,8 @@
             if (!currentDayKey) {
                 const weekendMsg = `<div class="empty-state">🎉 本日無課程！好好享受假日吧 🐾</div>`;
                 
-                myCol.innerHTML = `<div class="today-header-title"><img src="image1.png" alt="Kcc" onerror="imgFallback(this)"> Kcc 的課</div>` + weekendMsg;
-                baoCol.innerHTML = `<div class="today-header-title"><img src="image2.png" alt="Lyz" onerror="imgFallback(this)"> Lyz 的課</div>` + weekendMsg;
+                myCol.innerHTML = `<div class="today-header-title"><img src="我.jpg" alt="Kcc" onerror="imgFallback(this)"> Kcc 的課</div>` + weekendMsg;
+                baoCol.innerHTML = `<div class="today-header-title"><img src="寶.jpg" alt="Lyz" onerror="imgFallback(this)"> Lyz 的課</div>` + weekendMsg;
 
                 if (currentPersonMode === 'my') {
                     myCol.classList.add('show'); baoCol.classList.remove('show');
@@ -561,11 +656,11 @@
                 return;
             }
 
-            let myHtml = `<div class="today-header-title"><img src="image1.png" alt="Kcc" onerror="imgFallback(this)"> Kcc 的課</div>`;
+            let myHtml = `<div class="today-header-title"><img src="我.jpg" alt="Kcc" onerror="imgFallback(this)"> Kcc 的課</div>`;
             myHtml += generateListHTML(myData, currentDayKey);
             myCol.innerHTML = myHtml;
 
-            let baoHtml = `<div class="today-header-title"><img src="image2.png" alt="Lyz" onerror="imgFallback(this)"> Lyz 的課</div>`;
+            let baoHtml = `<div class="today-header-title"><img src="寶.jpg" alt="Lyz" onerror="imgFallback(this)"> Lyz 的課</div>`;
             baoHtml += generateListHTML(baoData, currentDayKey);
             baoCol.innerHTML = baoHtml;
 
@@ -577,14 +672,12 @@
                 myCol.classList.add('show'); baoCol.classList.add('show');
             }
 
-            updateDynamicCourseData();
+            updateDynamicCourseData(new Date());
         }
 
-        function updateDynamicCourseData() {
+        function updateDynamicCourseData(now) {
             const cards = document.querySelectorAll('.list-card');
             if(cards.length === 0) return;
-
-            const now = new Date();
 
             cards.forEach(card => {
                 const startStr = card.getAttribute('data-start');
@@ -594,8 +687,8 @@
                 const [sH, sM] = startStr.split(':').map(Number);
                 const [eH, eM] = endStr.split(':').map(Number);
                 
-                let sDate = new Date(); sDate.setHours(sH, sM, 0, 0);
-                let eDate = new Date(); eDate.setHours(eH, eM, 0, 0);
+                let sDate = new Date(now); sDate.setHours(sH, sM, 0, 0);
+                let eDate = new Date(now); eDate.setHours(eH, eM, 0, 0);
 
                 const badgeContainer = card.querySelector('.badge-container');
                 let status = 'upcoming';
@@ -603,61 +696,53 @@
                 if (now > eDate) status = 'ended';
                 else if (now >= sDate && now <= eDate) status = 'ongoing';
 
+                // 更新 Badge 與 Card 狀態
                 if(status === 'ongoing') {
                     if(!card.classList.contains('ongoing')) {
-                        card.classList.add('ongoing'); card.classList.remove('ended');
+                        card.classList.add('ongoing'); card.classList.remove('ended', 'upcoming');
                         badgeContainer.innerHTML = `<div class="status-badge ongoing"><span class="dot"></span> 上課中</div>`;
                     }
                 } else if (status === 'ended') {
                     if(!card.classList.contains('ended')) {
-                        card.classList.add('ended'); card.classList.remove('ongoing');
+                        card.classList.add('ended'); card.classList.remove('ongoing', 'upcoming');
                         badgeContainer.innerHTML = `<div class="status-badge ended">已結束</div>`;
                     }
                 } else {
-                    card.classList.remove('ongoing', 'ended');
-                    badgeContainer.innerHTML = '';
+                    if(!card.classList.contains('upcoming')) {
+                        card.classList.add('upcoming'); card.classList.remove('ongoing', 'ended');
+                        badgeContainer.innerHTML = `<div class="status-badge upcoming">即將到來</div>`;
+                    }
                 }
 
+                // 當卡片被展開時，計算動態剩餘時間與進度條
                 if (card.classList.contains('expanded')) {
                     const textEl = card.querySelector('.countdown-text');
                     const barEl = card.querySelector('.progress-bar-fill');
 
-                    if (status === 'ended') {
-                        textEl.innerText = "🍻 這堂課已經結束囉！";
-                        barEl.style.width = '100%';
-                        barEl.style.backgroundColor = '#ccc';
+                    if (status === 'upcoming') {
+                        let diffMs = sDate - now;
+                        let diffMins = Math.ceil(diffMs / 60000);
+                        let hours = Math.floor(diffMins / 60);
+                        let mins = diffMins % 60;
+                        textEl.innerHTML = `⏳ 距離上課還有 ${hours > 0 ? hours + ' 小時 ' : ''}${mins} 分鐘`;
+                        barEl.style.width = '0%';
+                        barEl.style.backgroundColor = 'var(--active-green)';
                     } else if (status === 'ongoing') {
-                        const diffMs = eDate - now;
-                        const mins = Math.floor(diffMs / 60000);
-                        const secs = Math.floor((diffMs % 60000) / 1000);
-                        textEl.innerText = `⏳ 距離下課還有 ${mins} 分 ${secs} 秒`;
-
-                        const totalMs = eDate - sDate;
-                        const MathElapsed = now - sDate;
-                        const percent = (MathElapsed / totalMs) * 100;
-                        
+                        let totalMs = eDate - sDate;
+                        let passedMs = now - sDate;
+                        let percent = (passedMs / totalMs) * 100;
+                        let remainMins = Math.ceil((eDate - now) / 60000);
+                        textEl.innerHTML = `🏃 上課中！還有 ${remainMins} 分鐘下課`;
                         barEl.style.width = `${percent}%`;
                         barEl.style.backgroundColor = 'var(--active-green)';
-                    } else { 
-                        const diffMs = sDate - now;
-                        const hours = Math.floor(diffMs / 3600000);
-                        const mins = Math.floor((diffMs % 3600000) / 60000);
-                        const secs = Math.floor((diffMs % 60000) / 1000);
-                        
-                        let timeStr = hours > 0 ? `${hours} 小時 ${mins} 分` : `${mins} 分 ${secs} 秒`;
-                        textEl.innerText = `🔜 距離上課還有 ${timeStr}`;
-                        barEl.style.width = '0%';
+                    } else if (status === 'ended') {
+                        textEl.innerHTML = `✅ 課程已結束，辛苦了！`;
+                        barEl.style.width = '100%';
+                        barEl.style.backgroundColor = '#ccc';
                     }
                 }
             });
         }
-
-        // 初始化
-        renderGridTable("myTableBody", myData, "my-item");
-        renderGridTable("baoTableBody", baoData, "bao-item");
-        
-        setInterval(updateDynamicCourseData, 1000);
-
     </script>
 </body>
 </html>
