@@ -397,13 +397,13 @@
         <div class="controls">
             <!-- 已替換為您上傳的正確檔名 -->
             <button class="btn btn-my active" onclick="showPersonMode('my')">
-                <img src="我.jpg" alt="Kcc" onerror="imgFallback(this)"> Kcc
+                <img src="image1.png" alt="Kcc" onerror="imgFallback(this)"> Kcc
             </button>
             <button class="btn btn-bao" onclick="showPersonMode('bao')">
-                <img src="寶.jpg" alt="Lyz" onerror="imgFallback(this)"> Lyz
+                <img src="image2.png" alt="Lyz" onerror="imgFallback(this)"> Lyz
             </button>
             <button class="btn btn-dual" onclick="showPersonMode('dual')">
-                <img src="S__48414784.jpg" alt="Our" onerror="imgFallback(this)"> Our
+                <img src="image3.png" alt="Our" onerror="imgFallback(this)"> Our
             </button>
         </div>
 
@@ -411,14 +411,14 @@
         <div id="view-grid" class="view-section active">
             <div class="main-wrapper" id="mainWrapper">
                 <div id="container-my" class="schedule-container show">
-                    <div class="person-label"><img src="我.jpg" alt="Kcc" onerror="imgFallback(this)"> Kcc</div>
+                    <div class="person-label"><img src="image1.png" alt="Kcc" onerror="imgFallback(this)"> Kcc</div>
                     <table>
                         <thead><tr><th>-</th><th>一</th><th>二</th><th>三</th><th>四</th><th>五</th></tr></thead>
                         <tbody id="myTableBody"></tbody>
                     </table>
                 </div>
                 <div id="container-bao" class="schedule-container">
-                    <div class="person-label"><img src="寶.jpg" alt="Lyz" onerror="imgFallback(this)"> Lyz</div>
+                    <div class="person-label"><img src="image2.png" alt="Lyz" onerror="imgFallback(this)"> Lyz</div>
                     <table>
                         <thead><tr><th>-</th><th>一</th><th>二</th><th>三</th><th>四</th><th>五</th></tr></thead>
                         <tbody id="baoTableBody"></tbody>
@@ -643,8 +643,8 @@
             if (!currentDayKey) {
                 const weekendMsg = `<div class="empty-state">🎉 本日無課程！好好享受假日吧 🐾</div>`;
                 
-                myCol.innerHTML = `<div class="today-header-title"><img src="我.jpg" alt="Kcc" onerror="imgFallback(this)"> Kcc 的課</div>` + weekendMsg;
-                baoCol.innerHTML = `<div class="today-header-title"><img src="寶.jpg" alt="Lyz" onerror="imgFallback(this)"> Lyz 的課</div>` + weekendMsg;
+                myCol.innerHTML = `<div class="today-header-title"><img src="image1.png" alt="Kcc" onerror="imgFallback(this)"> Kcc</div>` + weekendMsg;
+                baoCol.innerHTML = `<div class="today-header-title"><img src="image2.png" alt="Lyz" onerror="imgFallback(this)"> Lyz</div>` + weekendMsg;
 
                 if (currentPersonMode === 'my') {
                     myCol.classList.add('show'); baoCol.classList.remove('show');
@@ -656,11 +656,11 @@
                 return;
             }
 
-            let myHtml = `<div class="today-header-title"><img src="我.jpg" alt="Kcc" onerror="imgFallback(this)"> Kcc 的課</div>`;
+            let myHtml = `<div class="today-header-title"><img src="image1.png" alt="Kcc" onerror="imgFallback(this)"> Kcc</div>`;
             myHtml += generateListHTML(myData, currentDayKey);
             myCol.innerHTML = myHtml;
 
-            let baoHtml = `<div class="today-header-title"><img src="寶.jpg" alt="Lyz" onerror="imgFallback(this)"> Lyz 的課</div>`;
+            let baoHtml = `<div class="today-header-title"><img src="image2.png" alt="Lyz" onerror="imgFallback(this)"> Lyz</div>`;
             baoHtml += generateListHTML(baoData, currentDayKey);
             baoCol.innerHTML = baoHtml;
 
